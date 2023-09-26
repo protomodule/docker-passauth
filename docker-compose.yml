@@ -1,0 +1,24 @@
+services:
+  app:
+    image: nginxdemos/nginx-hello
+    ports:
+      - 82:8080
+
+  passauth:
+    build: .
+    tty: true
+    ports:
+      - 80:1234
+    depends_on:
+      - app
+    environment:
+      - PORT=1234
+      - PROXY_PROTOCOL=http
+      - PROXY_TARGET=app:8080
+      # - PROXY_HOSTNAME=
+      # - SERVER_NAME=
+      # - NAMESERVER=8.8.8.8
+      - ENABLED_HTTPS_REDIRECT=
+      - CLIENT_MAX_BODY_SIZE=100M
+      - CONTENT_SECURITY_POLICY=test
+      - NGINX_AUTH=user pass;another secret

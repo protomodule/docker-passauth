@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>🔐 401 - Authorization required</title>
+        <style>
+          html, body {font-family: sans-serif;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;background-color: #F7F8FB;height: 100%;-webkit-font-smoothing: antialiased;}body {margin: 0;padding: 0;display: flex;flex-direction: column;align-items: center;justify-content: center;}.hero {text-align: center;align-self: center;display: flex;flex-direction: column;align-items: center;padding: 0px 20px;max-width: 450px;}.logo {font-size: 50px;font-weight: 100;margin-top: 15px;color: #47494E;margin-bottom: 8px;background-color: #DBE1EC;border-radius: 15px;height: 2em;width: 2em;line-height: 1.9em;}h1 {font-size: 22px;font-weight: 100;margin-top: 25px;color: #47494E;margin-bottom: 8px;}h2 {font-family: 'Courier New', Courier, monospace;margin-top: 0;margin-bottom: 1.3em;}p {-webkit-margin-after: 0px;-webkit-margin-before: 0px;font-size: 15px;color: #7F828B;line-height: 21px;margin-bottom: 4px;}p a {color: #408fec;text-decoration: none;}.proto {position: fixed;left: 24px;bottom: 12px;color: #9FABBC;text-decoration: none}.info {position: fixed;right: 12px;bottom: 12px;border: 1px solid #9FABBC;border-radius: 10px;color: #9FABBC;text-decoration: none;font-size:0.7em;padding: 0.5em 1em;display: block;font-weight: bold}
+        </style>
+    </head>
+    <body>
+        <div class="spacer"></div>
+    <div class="hero">
+      <div class="logo">🔐</div>
+      <h1>Unauthorized.</h1>
+      <h2>401</h2>
+      <p>Access is denied due to invalid credentials or you don't have permission to view this page.</p>
+    </div>
+    <a target="_blank" href="https://github.com/protomodule/docker-passauth" class="proto">%{HOSTNAME}</a>
+    <a target="_blank" href="https://www.nginx.com/resources/wiki/extending/api/http/" class="info">v%{VERSION}</a>
+    </body>
+</html>

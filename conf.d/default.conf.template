@@ -1,0 +1,95 @@
+server {
+    listen       <%= $PORT %> default_server;
+    listen       [::]:<%= $PORT %> default_server;
+    server_name  <%= ${SERVER_NAME:-_}%>;
+    root         /usr/share/nginx/html;
+
+<% if [ "$ENABLED_HTTPS_REDIRECT" != "" ]; then -%>
+    if ($http_x_forwarded_proto != "https") {
+        rewrite ^(.*)$ https://$host$request_uri permanent;
+    }
+<% fi -%>
+
+    resolver <%= $NAMESERVER -%> valid=10s;
+    resolver_timeout 10s;
+
+    set $proxyloadbalancer <%= $PROXY_TARGET -%>$request_uri;
+
+    error_log   /dev/stderr;
+    access_log  /dev/stdout     main   if=$log_ua;
+
+    client_max_body_size <%= ${CLIENT_MAX_BODY_SIZE:-25M} %>;
+
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto 'https';
+    proxy_set_header X-NginX-Proxy true;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection 'upgrade';
+    proxy_set_header X-Request-ID $reqid;
+<% if [ "$PROXY_HOSTNAME" != "" ]; then -%>
+    proxy_set_header Host <%= $PROXY_HOSTNAME -%>;
+<% fi -%>
+
+    proxy_http_version 1.1;
+    proxy_read_timeout 600;
+    proxy_cache_bypass $http_upgrade;
+
+    proxy_redirect off;
+
+    add_header X-Content-Type-Options nosniff;
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+    add_header X-Frame-Options "SAMEORIGIN";
+    add_header X-XSS-Protection "1; mode=block";
+    add_header X-Request-ID $reqid always;
+<% if [ "$CONTENT_SECURITY_POLICY" != "" ]; then -%>
+    add_header Content-Security-Policy "<%= $CONTENT_SECURITY_POLICY %>" always;
+<% fi -%>
+<% if [ "$CONTENT_SECURITY_POLICY_REPORT_ONLY" != "" ]; then -%>
+    add_header Content-Security-Policy-Report-Only "<%= $CONTENT_SECURITY_POLICY_REPORT_ONLY %>" always;
+<% fi -%>
+
+    proxy_hide_header X-Powered-By;
+
+    # Custom 502 page
+    error_page 502 /502.html;
+    location = /502.html {
+        sub_filter '%{HOSTNAME}' $host;
+        sub_filter '%{VERSION}' $nginx_version;
+        sub_filter_once off;
+        allow all;
+        internal;
+    }
+
+    # Custom 401 page
+    error_page 401 /401.html;
+    location = /401.html {
+        auth_basic off;
+        sub_filter '%{HOSTNAME}' $host;
+        sub_filter '%{VERSION}' $nginx_version;
+        sub_filter_once off;
+        allow all;
+        internal;
+    }
+
+    # Default target
+    location / {
+        proxy_pass <%= $PROXY_PROTOCOL -%>://$proxyloadbalancer;
+    }
+
+<% if [ "$NGINX_HTPASSWD" != "" ]; then -%>
+    auth_basic "Protected access";
+    auth_basic_user_file <%= $NGINX_HTPASSWD -%>;
+<% fi -%>
+}
+
+map $http_user_agent $log_ua {
+    ~ELB-HealthChecker 0;
+    ~Amazon-Route53-Health-Check-Service 0;
+    default 1;
+}
+
+map $http_x_request_id $reqid {
+    default   $http_x_request_id;
+    ""        $request_id;
+}
