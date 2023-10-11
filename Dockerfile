@@ -1,9 +1,21 @@
 # ---- Nginx ----
-FROM nginx:1-alpine-slim
+FROM nginx:1.25
 LABEL maintainer="Lukas Korl <hello@lukaskorl.com>"
 
-# Install dependencies for nginx config templating
-RUN apk add esh apache2-utils figlet lolcat boxes --repository=http://dl-cdn.alpinelinux.org/alpine/edge/testing/
+# Install dependencies
+RUN apt-get update \
+    && apt-get install -y wget apache2-utils figlet lolcat boxes wget \
+    && apt-get clean \
+    && apt-get autoremove --yes \
+    && rm -rf /var/lib/apt/lists/* \
+    && ln -s /usr/games/lolcat /usr/bin/lolcat
+
+# Install esh for nginx config templating
+RUN cd /usr/local/bin \
+    && wget https://raw.githubusercontent.com/jirutka/esh/v0.3.2/esh \
+    && chmod ugo+x /usr/local/bin/esh \
+    && echo '9084e3e8e70e4ea81c40cd1cf85559196c0fa2cc  esh' | sha1sum -c \
+    || exit 1
 
 # Remove preinstalled site configurations
 RUN rm /etc/nginx/conf.d/* && \
