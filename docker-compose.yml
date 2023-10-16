@@ -1,8 +1,6 @@
 services:
   app:
     image: nginxdemos/nginx-hello
-    ports:
-      - 82:8080
 
   passauth:
     build: .
@@ -22,3 +20,9 @@ services:
       - CLIENT_MAX_BODY_SIZE=100M
       - CONTENT_SECURITY_POLICY=test
       - BASIC_AUTH=user pass;another secret
+    # To enable SSL uncomment the following 5 lines and change port under 'ports' to 443:
+    #   - SSL_CERTIFICATE=/etc/nginx/selfsigned.crt
+    #   - SSL_CERTIFICATE_KEY=/etc/nginx/selfsigned.key
+    # volumes:
+    #   - ./selfsigned.crt:/etc/nginx/selfsigned.crt:ro
+    #   - ./selfsigned.key:/etc/nginx/selfsigned.key:ro

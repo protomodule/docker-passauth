@@ -1,8 +1,22 @@
 server {
-    listen       <%= $PORT %> default_server;
-    listen       [::]:<%= $PORT %> default_server;
+    listen       <%= $PORT %> default_server <% if [ "$SSL_CERTIFICATE" != "" ] && [ "$SSL_CERTIFICATE_KEY" != "" ]; then -%>ssl<% fi -%>;
+    listen       [::]:<%= $PORT %> default_server <% if [ "$SSL_CERTIFICATE" != "" ] && [ "$SSL_CERTIFICATE_KEY" != "" ]; then -%>ssl<% fi -%>;
     server_name  <%= ${SERVER_NAME:-_}%>;
     root         /usr/share/nginx/html;
+
+<% if [ "$SSL_CERTIFICATE" != "" ] && [ "$SSL_CERTIFICATE_KEY" != "" ]; then -%>
+    ssl_certificate <%= $SSL_CERTIFICATE -%>;
+    ssl_certificate_key <%= $SSL_CERTIFICATE_KEY -%>;
+    ssl_session_timeout 1d;
+    ssl_session_cache shared:MozSSL:10m;  # about 40000 sessions
+    ssl_session_tickets off;
+    ssl_dhparam /etc/nginx/dhparam.pem;
+
+    # intermediate configuration
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:DHE-RSA-CHACHA20-POLY1305;
+    ssl_prefer_server_ciphers off;
+<% fi -%>
 
 <% if [ "$ENABLED_HTTPS_REDIRECT" != "" ]; then -%>
     if ($http_x_forwarded_proto != "https") {

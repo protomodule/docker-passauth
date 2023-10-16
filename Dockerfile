@@ -22,6 +22,8 @@ RUN rm /etc/nginx/conf.d/* && \
     rm /docker-entrypoint.d/10-listen-on-ipv6-by-default.sh && \
     mkdir -p /etc/nginx/esh
 
+RUN curl https://ssl-config.mozilla.org/ffdhe2048.txt > /etc/nginx/dhparam.pem
+
 # Add custom configuration and startup scripts
 COPY entrypoint/* /docker-entrypoint.d
 COPY conf.d/* /etc/nginx/esh/
