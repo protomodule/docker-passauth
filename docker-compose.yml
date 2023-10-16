@@ -21,4 +21,4 @@ services:
       - ENABLED_HTTPS_REDIRECT=
       - CLIENT_MAX_BODY_SIZE=100M
       - CONTENT_SECURITY_POLICY=test
-      - NGINX_AUTH=user pass;another secret
+      - BASIC_AUTH=user pass;another secret

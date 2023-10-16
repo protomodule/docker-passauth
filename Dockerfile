@@ -1,5 +1,5 @@
 # ---- Nginx ----
-FROM nginx:1.25
+FROM nginx:1.21
 LABEL maintainer="Lukas Korl <hello@lukaskorl.com>"
 
 # Install dependencies

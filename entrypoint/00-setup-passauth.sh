@@ -22,9 +22,9 @@ if [ -z "$PORT" ]; then
 fi
 
 # Setup basic auth when required
-## To enable basic auth the environment variable NGINX_AUTH must be set
+## To enable basic auth the environment variable BASIC_AUTH must be set
 echo "───> 👋  Hello"
-if [ -z "$NGINX_AUTH" ]; then
+if [ -z "$BASIC_AUTH" ]; then
   echo " └─> 🔓  Starting publicly - no password protection"
 else
   echo " └─> 🔐  Activating password protection"
@@ -33,7 +33,7 @@ else
   export NGINX_HTPASSWD=/etc/nginx/htpasswd
   export IFS=";"
   touch $NGINX_HTPASSWD
-  for CREDENTIALS in $NGINX_AUTH; do
+  for CREDENTIALS in $BASIC_AUTH; do
     sh -c "htpasswd -bB $NGINX_HTPASSWD $CREDENTIALS"
   done
   echo ""

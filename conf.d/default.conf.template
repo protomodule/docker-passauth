@@ -78,7 +78,7 @@ server {
     }
 
 <% if [ "$NGINX_HTPASSWD" != "" ]; then -%>
-    auth_basic "Protected access";
+    auth_basic "Restricted";
     auth_basic_user_file <%= $NGINX_HTPASSWD -%>;
 <% fi -%>
 }

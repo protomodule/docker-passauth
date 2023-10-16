@@ -16,4 +16,4 @@ The configuration for this container is provided with environment variables:
   - (optional) `CLIENT_MAX_BODY_SIZE` Defaults to `25M` if not specified
   - (optional) `CONTENT_SECURITY_POLICY` Adds a CSP header
   - (optional) `CONTENT_SECURITY_POLICY_REPORT_ONLY` Adds a CSP reporting header
-  - (optional) `NGINX_AUTH` If you need basic auth protection add "<USER> <PASSWORD>" combinations for every user separated by semicolon
+  - (optional) `BASIC_AUTH` If you need basic auth protection add "<USER> <PASSWORD>" combinations for every user separated by semicolon
