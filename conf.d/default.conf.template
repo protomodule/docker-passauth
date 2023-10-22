@@ -1,12 +1,12 @@
 server {
-    listen       <%= $PORT %> default_server <% if [ "$SSL_CERTIFICATE" != "" ] && [ "$SSL_CERTIFICATE_KEY" != "" ]; then -%>ssl<% fi -%>;
-    listen       [::]:<%= $PORT %> default_server <% if [ "$SSL_CERTIFICATE" != "" ] && [ "$SSL_CERTIFICATE_KEY" != "" ]; then -%>ssl<% fi -%>;
-    server_name  <%= ${SERVER_NAME:-_}%>;
+    listen       <%= "$PORT" %> default_server <% if [ "$SSL_CERTIFICATE" != "" ] && [ "$SSL_CERTIFICATE_KEY" != "" ]; then -%>ssl<% fi -%>;
+    listen       [::]:<%= "$PORT" %> default_server <% if [ "$SSL_CERTIFICATE" != "" ] && [ "$SSL_CERTIFICATE_KEY" != "" ]; then -%>ssl<% fi -%>;
+    server_name  <%= "${SERVER_NAME:-_}"%>;
     root         /usr/share/nginx/html;
 
 <% if [ "$SSL_CERTIFICATE" != "" ] && [ "$SSL_CERTIFICATE_KEY" != "" ]; then -%>
-    ssl_certificate <%= $SSL_CERTIFICATE -%>;
-    ssl_certificate_key <%= $SSL_CERTIFICATE_KEY -%>;
+    ssl_certificate <%= "$SSL_CERTIFICATE" -%>;
+    ssl_certificate_key <%= "$SSL_CERTIFICATE_KEY" -%>;
     ssl_session_timeout 1d;
     ssl_session_cache shared:MozSSL:10m;  # about 40000 sessions
     ssl_session_tickets off;
@@ -24,15 +24,15 @@ server {
     }
 <% fi -%>
 
-    resolver <%= $NAMESERVER -%> valid=10s;
+    resolver <%= "$NAMESERVER" -%> valid=10s;
     resolver_timeout 10s;
 
-    set $proxyloadbalancer <%= $PROXY_TARGET -%>$request_uri;
+    set $proxyloadbalancer <%= "$PROXY_TARGET" -%>$request_uri;
 
     error_log   /dev/stderr;
     access_log  /dev/stdout     main   if=$log_ua;
 
-    client_max_body_size <%= ${CLIENT_MAX_BODY_SIZE:-25M} %>;
+    client_max_body_size <%= "${CLIENT_MAX_BODY_SIZE:-25M}" %>;
 
     proxy_set_header X-Real-IP $remote_addr;
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -42,7 +42,7 @@ server {
     proxy_set_header Connection 'upgrade';
     proxy_set_header X-Request-ID $reqid;
 <% if [ "$PROXY_HOSTNAME" != "" ]; then -%>
-    proxy_set_header Host <%= $PROXY_HOSTNAME -%>;
+    proxy_set_header Host <%= "$PROXY_HOSTNAME" -%>;
 <% fi -%>
 
     proxy_http_version 1.1;
@@ -57,10 +57,22 @@ server {
     add_header X-XSS-Protection "1; mode=block";
     add_header X-Request-ID $reqid always;
 <% if [ "$CONTENT_SECURITY_POLICY" != "" ]; then -%>
-    add_header Content-Security-Policy "<%= $CONTENT_SECURITY_POLICY %>" always;
+    add_header Content-Security-Policy "<%= "$CONTENT_SECURITY_POLICY" %>" always;
 <% fi -%>
 <% if [ "$CONTENT_SECURITY_POLICY_REPORT_ONLY" != "" ]; then -%>
-    add_header Content-Security-Policy-Report-Only "<%= $CONTENT_SECURITY_POLICY_REPORT_ONLY %>" always;
+    add_header Content-Security-Policy-Report-Only "<%= "$CONTENT_SECURITY_POLICY_REPORT_ONLY" %>" always;
+<% fi -%>
+
+<% if [ "$CORS_POLICY_ORIGIN" != "" ]; then -%>
+    add_header 'Access-Control-Allow-Origin' '<%= "$CORS_POLICY_ORIGIN" %>' always;
+    add_header 'Access-Control-Allow-Methods' '<%= "$CORS_POLICY_METHODS" %>' always;
+    add_header 'Access-Control-Allow-Headers' '<%= "$CORS_POLICY_ALLOW_HEADERS" %>' always;
+    <% if [ "$CORS_POLICY_EXPOSE_HEADERS" != "" ]; then -%>
+    add_header 'Access-Control-Expose-Headers' '<%= "$CORS_POLICY_EXPOSE_HEADERS" %>' always;
+    <% fi -%>
+    <% if [ "$CORS_POLICY_ALLOW_CREDENTIALS" = true ]; then -%>
+    add_header 'Access-Control-Allow-Credentials' 'true' always;
+    <% fi -%>
 <% fi -%>
 
     proxy_hide_header X-Powered-By;
@@ -88,12 +100,12 @@ server {
 
     # Default target
     location / {
-        proxy_pass <%= $PROXY_PROTOCOL -%>://$proxyloadbalancer;
+        proxy_pass <%= "$PROXY_PROTOCOL" -%>://$proxyloadbalancer;
     }
 
 <% if [ "$NGINX_HTPASSWD" != "" ]; then -%>
     auth_basic "Restricted";
-    auth_basic_user_file <%= $NGINX_HTPASSWD -%>;
+    auth_basic_user_file <%= "$NGINX_HTPASSWD" -%>;
 <% fi -%>
 }
 
