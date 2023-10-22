@@ -1,5 +1,7 @@
 # 🚦 Passway
-## Opinionated Nginx-based gateway container 
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+
+### Opinionated Nginx-based gateway container 
 
 This Docker container acts as a thin reverse proxy layer for adding common HTTP headers, SSL endpoint termination and optionally basic auth so that your application does not need to implement common functionality.
 
