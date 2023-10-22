@@ -17,8 +17,12 @@ fi
 
 # Check $PORT or set fallback -> to be substituted in nginx config
 if [ -z "$PORT" ]; then
-  echo "🚨  Environment variable \$PORT not configured. Falling back to port 80"
-  export PORT=80
+  if [ -z "$SSL_CERTIFICATE" ]; then
+    export PORT=80
+  else
+    export PORT=443
+  fi
+  echo "🚨  Environment variable \$PORT not configured. Falling back to port $PORT"
 fi
 
 # Setup basic auth when required
