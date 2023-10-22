@@ -16,6 +16,7 @@ The configuration for this container is provided via environment variables at st
   - (optional) `SERVER_NAME` For nginx to listen to
   - (optional) `NAMESERVER` **Important:** If not specified nameserver will fallback to `127.0.0.11` for Docker usage
   - (optional) `ENABLED_HTTPS_REDIRECT` Force 301 redirects to HTTPS. For use where this gateway is used behind another SSL termination endpoint.
+  - (optional) `ENABLED_HTTPS_REDIRECT_ON_PORT` Creates an additional HTTP listener/server on given port (recommendation: 80). This listener does nothing more then redirecting to https.
   - (optional) `CLIENT_MAX_BODY_SIZE` Defaults to `25M` if not specified
   - (optional) `CONTENT_SECURITY_POLICY` Adds a CSP header
   - (optional) `CONTENT_SECURITY_POLICY_REPORT_ONLY` Adds a CSP reporting header

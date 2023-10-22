@@ -1,0 +1,12 @@
+<% if [ "$ENABLED_HTTPS_REDIRECT_ON_PORT" != "" ]; then -%>
+server {
+    listen       <%= "$ENABLED_HTTPS_REDIRECT_ON_PORT" %> default_server;
+    listen       [::]:<%= "$ENABLED_HTTPS_REDIRECT_ON_PORT" %> default_server;
+    server_name  <%= "${SERVER_NAME:-_}"%>;
+    root         /usr/share/nginx/html;
+    
+    if ($http_x_forwarded_proto != "https") {
+        rewrite ^(.*)$ https://$host<% if [ "$PORT" != "443" ]; then -%>:<%= "$PORT" -%><% fi -%>$request_uri permanent;
+    }
+}
+<% fi -%>
